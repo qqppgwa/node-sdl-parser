@@ -1,36 +1,43 @@
 import { EOL } from 'os';
 
-function letsParty(obj: any) {
-  console.log(obj);
-  const perfect = obj.forEach((el: any) => {
-    // console.log(Object.keys(el));
-    // console.log(el.Name);
+/** make object into array */
+function parseObjToArr(obj: any) {
+  const finalObj: Object = {};
+  const finalArr = obj.forEach((el: any, index: any) => {
     const objWithName = { ...el };
     delete el.Name;
-    // console.log({ [objWithName.Name]: { ...el } });
-    const a: any = { [objWithName['Name']]: { ...el } };
-    console.log(a);
+    delete el[''];
+
+    const nameAsTittle: Object = {
+      [objWithName['Name']]: { ...el },
+    };
+
+    Object.assign(finalObj, nameAsTittle);
+
+    // return nameAsTittle;
   });
+  // console.log(finalObj);
+  return finalObj;
 }
-
+// make every section of  original String into an array
 function parseSection(data: string[]) {
-  // console.log(data);
-
-  const shit = data.map((el) => {
-    // console.log(el.replace(/\t/g, ',').replace(/,/, ''));
-    const toArray = el.replace(/|\t/, '').replace(/"/g, '').split(/\t/);
-    const a = toArray.map((str) => {
+  const arr = data.map((el) => {
+    const cleanStrArr = el.replace(/|\t/, '').replace(/"/g, '').split(/\t/);
+    // console.log(cleanStrArr);
+    const cleanStrObjArr = cleanStrArr.map((str) => {
       const [key, ...values] = str.split('=');
       const obj = { [key]: values.join('=') };
       return obj;
     });
-    const QQ: Object = {};
-    a.forEach((objEl) => {
-      Object.assign(QQ, objEl);
+    // console.log(cleanStrObjArr);
+    const obj: Object = {};
+    cleanStrObjArr.forEach((objEl) => {
+      Object.assign(obj, objEl);
     });
-    return QQ;
+    return obj;
   });
-  letsParty(shit);
+  return parseObjToArr(arr);
+  // return 'll';
 }
 /**{
  * 
@@ -46,9 +53,12 @@ function parseSection(data: string[]) {
  * @param {string} data
  */
 function parse(data: string) {
-  // console.log(data.split(/^TOKEN(?:\r\n|[\r\n])([\s\S]*?)End$/gm));
-  // parseSection(data.replace(/TOKEN|\r?\n|\t|\r| |(#(.*)$)/gm, '').split('End'));
-  parseSection(data.replace(/TOKEN|\r?\n|\r| |(#(.*)$)/gm, '').split('End'));
+  console.log(data.split('End'));
+  return parseSection(
+    data.replace(/TOKEN|\r?\n|\r| |(#(.*)$)/gm, '').split('End')
+  );
+  // return 'kok;';
+  // parseSection(data.replace(/TOKEN|\r?\n|\r| |(#(.*)$)/gm, '').split('End'));
 }
 
 export default parse;

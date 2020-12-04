@@ -1,11 +1,11 @@
-import path from "path";
-import readFile from "./src/readFile";
-import parse from "./src/parse";
+import path from 'path';
+import readFile from './src/readFile';
+import parse from './src/parse';
 
 /**
  * locate sdl file path
  */
-const fp = path.join(__dirname, "./test/data/Oem.sdl");
+const fp = path.join(__dirname, './test/data/Oem.sdl');
 
 async function run() {
   /** read file */

@@ -1,12 +1,14 @@
 /**
  * locate sdl file path
  */
-import fs from "fs";
-import path from "path";
-import appendDummy from "./utils/appendDummy";
+import fs from 'fs';
+import path from 'path';
+import appendDummy from './utils/appendDummy';
+import parse from '../src/parse';
+import readFile from '../src/readFile';
 
-const fpTestData = path.join(__dirname, "./data/Oem.sdl");
-const fpTestDataJumbo = path.join(__dirname, "./data/Oem.Jumbo.sdl");
+const fpTestData = path.join(__dirname, './data/Oem.sdl');
+const fpTestDataJumbo = path.join(__dirname, './data/Oem.Jumbo.sdl');
 
 /**
  * 初始化函式，製作Oem.Jumbo.sdl
@@ -39,12 +41,36 @@ afterAll((done) => {
   });
 });
 
+async function readData(file: string) {
+  /** read file */
+  const data = await readFile(file).then((res) => parse(res));
+  // console.log(data);
+  return data;
+}
+
 /**
  * start_test
  */
 function start_test() {
-  test("Put your test case here", async function () {
+  const check = (data: any) => {
+    expect(data['PHASE_CODE'].Value).toEqual('A');
+    expect(data['PROJECT_MAJOR_VERSION'].Value).toEqual('0');
+    expect(data['PROJECT_MINOR_VERSION'].Value).toEqual('01');
+  };
+  test('Normal size', async function () {
     // Put your test case here
+    return await readData(fpTestData).then((data: any) => {
+      // console.log(data['PHASE_CODE'].Value);
+      check(data);
+    });
+  });
+
+  test('Fat size', async function () {
+    // Put your test case here
+    return await readData(fpTestDataJumbo).then((data: object) => {
+      // console.log(data);
+      check(data);
+    });
   });
 }
 
